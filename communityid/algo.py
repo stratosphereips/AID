@@ -9,6 +9,7 @@ import logging
 import socket
 import string
 import struct
+import re
 
 from communityid import error
 from communityid import compat
@@ -32,6 +33,7 @@ PROTO_SCTP = 132
 # five-tuple.
 PORT_PROTOS = set([PROTO_ICMP, PROTO_TCP, PROTO_UDP, PROTO_ICMP6, PROTO_SCTP])
 
+
 class FlowTuple:
     """
     Tuples of network flow endpoints, used as input for the Community
@@ -42,9 +44,11 @@ class FlowTuple:
     for less common IP payloads.
     """
     Data = collections.namedtuple(
-        'Data', ['proto', 'saddr', 'daddr', 'sport', 'dport'])
+        'Data', ['proto', 'ts', 'saddr', 'daddr', 'sport', 'dport'])
 
-    def __init__(self, proto, saddr, daddr, sport=None, dport=None,
+    def __init__(self, proto, ts,
+                 saddr, daddr,
+                 sport=None, dport=None,
                  is_one_way=False):
         """Tuple initializer.
 
@@ -74,9 +78,14 @@ class FlowTuple:
         This can raise FlowTupleErrors when the input is inconsistent.
 
         """
-        self.proto = proto
+
+        self.ts, self.proto = ts, proto
         self.saddr, self.daddr = saddr, daddr
         self.sport, self.dport = sport, dport
+
+        if ts is None or \
+                ( not self.is_unix_timestamp_format(ts)):
+            raise error.FlowTupleError('Need a unix timestamp')
 
         if proto is None or type(proto) != int:
             raise error.FlowTupleError('Need numeric protocol number')
@@ -109,6 +118,7 @@ class FlowTuple:
         # stores this result, assuming by default we're bidirectional.
 
         self.is_one_way = is_one_way
+        self.ts = ts
 
         # The rest of the constructor requires ports.
         if sport is None or dport is None:
@@ -132,6 +142,13 @@ class FlowTuple:
                 self.sport = self._port_to_same(sport, self.sport)
                 self.dport = self._port_to_same(dport, self.dport)
 
+    def is_unix_timestamp_format(self, ts):
+        """returns true if the given ts is in unixtiemstamp format"""
+        timestamp_pattern =  r'^\d+\.\d+$'
+        match = re.match(timestamp_pattern, str(ts))
+        return True if match else False
+
+
     def __repr__(self):
         data = self.get_data()
         ordered = 'ordered' if self.is_ordered() else 'flipped'
@@ -153,7 +170,7 @@ class FlowTuple:
         # Absent good types, make it best-effort to get these
         # renderable. If all characters are printable, we assume this
         # in not NBO.
-        saddr, daddr, sport, dport = self.saddr, self.daddr, self.sport, self.dport
+        ts, saddr, daddr, sport, dport = self.ts, self.saddr, self.daddr, self.sport, self.dport
 
         if compat.have_real_bytes_type() and isinstance(saddr, bytes):
             saddr = self._addr_to_ascii(saddr)
@@ -174,7 +191,7 @@ class FlowTuple:
         if dport is not None and not isinstance(dport, int):
             dport = struct.unpack('!H', dport)[0]
 
-        return FlowTuple.Data(self.proto, saddr, daddr, sport, dport)
+        return FlowTuple.Data(self.proto, ts, saddr, daddr, sport, dport)
 
     def is_ordered(self):
         """
@@ -210,9 +227,9 @@ class FlowTuple:
         FlowTuple.is_ordered() for details).
         """
         if self.is_ordered():
-            return FlowTuple(self.proto, self.saddr, self.daddr,
+            return FlowTuple(self.proto, self.ts, self.saddr, self.daddr,
                              self.sport, self.dport, self.is_one_way)
-        return FlowTuple(self.proto, self.daddr, self.saddr,
+        return FlowTuple(self.proto, self.ts, self.daddr, self.saddr,
                          self.dport, self.sport, self.is_one_way)
 
     def in_nbo(self):
@@ -222,6 +239,7 @@ class FlowTuple:
         """
         saddr = self._addr_to_nbo(self.saddr)
         daddr = self._addr_to_nbo(self.daddr)
+        ts = self._ts_to_nbo(self.ts)
 
         if isinstance(self.sport, int):
             sport = struct.pack('!H', self.sport)
@@ -233,7 +251,8 @@ class FlowTuple:
         else:
             dport = self.dport
 
-        return FlowTuple(self.proto, saddr, daddr, sport, dport, self.is_one_way)
+        return FlowTuple(self.proto, ts,
+                         saddr, daddr, sport, dport, self.is_one_way)
 
     @staticmethod
     def is_ipaddr(val):
@@ -333,28 +352,28 @@ class FlowTuple:
     # Convenience wrappers for making protocol-specific tuple instances.
 
     @classmethod
-    def make_tcp(cls, saddr, daddr, sport, dport):
-        return cls(PROTO_TCP, saddr, daddr, int(sport), int(dport))
+    def make_tcp(cls, ts, saddr, daddr, sport, dport):
+        return cls(PROTO_TCP, ts, saddr, daddr, int(sport), int(dport))
 
     @classmethod
-    def make_udp(cls, saddr, daddr, sport, dport):
-        return cls(PROTO_UDP, saddr, daddr, int(sport), int(dport))
+    def make_udp(cls, ts, saddr, daddr, sport, dport):
+        return cls(PROTO_UDP, ts, saddr, daddr, int(sport), int(dport))
 
     @classmethod
-    def make_sctp(cls, saddr, daddr, sport, dport):
-        return cls(PROTO_SCTP, saddr, daddr, int(sport), int(dport))
+    def make_sctp(cls, ts, saddr, daddr, sport, dport):
+        return cls(PROTO_SCTP, ts, saddr, daddr, int(sport), int(dport))
 
     @classmethod
-    def make_icmp(cls, saddr, daddr, mtype, mcode):
-        return cls(PROTO_ICMP, saddr, daddr, int(mtype), int(mcode))
+    def make_icmp(cls, ts, saddr, daddr, mtype, mcode):
+        return cls(PROTO_ICMP, ts, saddr, daddr, int(mtype), int(mcode))
 
     @classmethod
-    def make_icmp6(cls, saddr, daddr, mtype, mcode):
-        return cls(PROTO_ICMP6, saddr, daddr, int(mtype), int(mcode))
+    def make_icmp6(cls, ts, saddr, daddr, mtype, mcode):
+        return cls(PROTO_ICMP6, ts, saddr, daddr, int(mtype), int(mcode))
 
     @classmethod
-    def make_ip(cls, saddr, daddr, proto):
-        return cls(proto, saddr, daddr)
+    def make_ip(cls, ts, saddr, daddr, proto):
+        return cls(proto, ts, saddr, daddr)
 
 
 class CommunityIDBase:
