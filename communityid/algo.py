@@ -84,7 +84,7 @@ class FlowTuple:
         self.sport, self.dport = sport, dport
 
         if ts is None or \
-                ( not self.is_unix_timestamp_format(ts)):
+                (not isinstance(ts, bytes) and not self.is_unix_timestamp_format(ts)):
             raise error.FlowTupleError('Need a unix timestamp')
 
         if proto is None or type(proto) != int:
@@ -231,6 +231,19 @@ class FlowTuple:
                              self.sport, self.dport, self.is_one_way)
         return FlowTuple(self.proto, self.ts, self.daddr, self.saddr,
                          self.dport, self.sport, self.is_one_way)
+
+    def _ts_to_nbo(self, ts):
+        if isinstance(ts, bytes):
+            return ts
+        # max numbers of a ts is 16 digits without the foating point
+        # so we'd need max of 7 bytes to store the largest unix ts we can find
+        max_bytes = 8
+        ts_without_floating_point = ts.replace('.','')
+        return int(ts_without_floating_point).to_bytes(
+            max_bytes, 
+            byteorder='big')
+
+
 
     def in_nbo(self):
         """
@@ -467,6 +480,7 @@ class CommunityID(CommunityIDBase):
 
         try:
             dlen = hash_update(struct.pack('!H', self._seed), 'seed') # 2-byte seed
+            dlen += hash_update(tpl.ts, 'ts') # 8 bytes for the unix timestamp
             dlen += hash_update(tpl.saddr, 'ipaddr') # 4 bytes (v4 addr) or 16 bytes (v6 addr)
             dlen += hash_update(tpl.daddr, 'ipaddr') # 4 bytes (v4 addr) or 16 bytes (v6 addr)
             dlen += hash_update(struct.pack('B', tpl.proto), 'proto') # 1 byte for transport proto
