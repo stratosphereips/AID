@@ -240,7 +240,7 @@ class FlowTuple:
         max_bytes = 8
         ts_without_floating_point = ts.replace('.','')
         return int(ts_without_floating_point).to_bytes(
-            max_bytes, 
+            max_bytes,
             byteorder='big')
 
 
@@ -433,7 +433,7 @@ class CommunityID(CommunityIDBase):
     An algorithm object that computes Community IDs on FlowTuple instances.
     """
     def __init__(self, seed=0, use_base64=True):
-        self._version = 1
+        self._version = 2
         self._seed = seed
         self._use_base64 = use_base64
         self._err = None
