@@ -267,18 +267,36 @@ class TestAID(unittest.TestCase):
                  '2:rEQ2fCKqQlrXOHmljIGNL0W7mes=',
                  '2:ac44367c22aa425ad73879a58c818d2f45bb99eb',
                  '2:Wv56hNj9UvXtDVsCe3UwB0+nGNM='
-                 ]
+                 ],
 
 
-                # ['14.125489','8.8.8.8', '192.168.1.52', 53, 54585,
-                #  '1:d/FP5EW3wiY1vCndhwleRRKHowQ=',
-                #  '1:77f14fe445b7c22635bc29dd87095e451287a304',
-                #  '1:Q9We8WO3piVF8yEQBNJF4uiSVrI='],
+                [
+                    '14.125489','8.8.8.8', '192.168.1.52', 53, 54585,
+                    '2:MFrVR5TU1GlRA1eJE/RpqFNCPd0=',
+                    '2:305ad54794d4d4695103578913f469a853423ddd',
+                    '2:UfdfqxbJ/Y2j+QW7x0yzQbwHTno='
+                ]
+
             ],
             aid.FlowTuple.make_udp,
             aid.PROTO_UDP,
             socket.AF_INET)
 
+    def test_ip(self):
+        self.verify_short_tuples(
+            [
+                ['1601998366.806331', '10.1.24.4', '10.1.12.1',
+                 '2:f/jCaTaql4i2dkiYbPbpRQA5lWg=',
+                 '2:7ff8c26936aa9788b67648986cf6e94500399568',
+                 '2:QM69eDk9KKO7pt4fCHRR3WoQ5Ds='],
+
+                ['160166.806', '10.1.12.1', '10.1.24.4',
+                 '2:QszWW4WqKjNZRMQ6ZdzYHYwTi84=',
+                '2:42ccd65b85aa2a335944c43a65dcd81d8c138bce',
+                 '2:lDb1HTeX/VTrraT295C2ZD/hTv8='],
+            ],
+            aid.FlowTuple.make_ip,
+            46, socket.AF_INET)
 
     # def test_inputs(self):
     #     # Need protocol
