@@ -190,33 +190,35 @@ class TestAID(unittest.TestCase):
     #
     #
     #
-    # def test_icmp6(self):
-    #     self.verify_full_tuples(
-    #         [
-    #             ['fe80::200:86ff:fe05:80da', 'fe80::260:97ff:fe07:69ea', 135, 0,
-    #              '1:dGHyGvjMfljg6Bppwm3bg0LO8TY=',
-    #              '1:7461f21af8cc7e58e0e81a69c26ddb8342cef136',
-    #              '1:kHa1FhMYIT6Ym2Vm2AOtoOARDzY='],
-    #
-    #             ['fe80::260:97ff:fe07:69ea', 'fe80::200:86ff:fe05:80da', 136, 0,
-    #              '1:dGHyGvjMfljg6Bppwm3bg0LO8TY=',
-    #              '1:7461f21af8cc7e58e0e81a69c26ddb8342cef136',
-    #              '1:kHa1FhMYIT6Ym2Vm2AOtoOARDzY='],
-    #
-    #             ['3ffe:507:0:1:260:97ff:fe07:69ea', '3ffe:507:0:1:200:86ff:fe05:80da', 3, 0,
-    #              '1:NdobDX8PQNJbAyfkWxhtL2Pqp5w=',
-    #              '1:35da1b0d7f0f40d25b0327e45b186d2f63eaa79c',
-    #              '1:OlOWx9psIbBFi7lOCw/4MhlKR9M='],
-    #
-    #             ['3ffe:507:0:1:200:86ff:fe05:80da', '3ffe:507:0:1:260:97ff:fe07:69ea', 3, 0,
-    #              '1:/OGBt9BN1ofenrmSPWYicpij2Vc=',
-    #              '1:fce181b7d04dd687de9eb9923d66227298a3d957',
-    #              '1:Ij4ZxnC87/MXzhOjvH2vHu7LRmE='],
-    #         ],
-    #         aid.FlowTuple.make_icmp6,
-    #         aid.PROTO_ICMP6,
-    #         socket.AF_INET6)
-    #
+    def test_icmp6(self):
+        self.verify_full_tuples(
+            [
+                ['14.125489', 'fe80::200:86ff:fe05:80da', 'fe80::260:97ff:fe07:69ea', 135, 0,
+                 '2:G52qOZ/Xl1IQatX7QFj1xiF9zu0=',
+                 '2:1b9daa399fd79752106ad5fb4058f5c6217dceed',
+                 '2:TR3VmEV+YrJoSxUp91WrSBvp+94='],
+
+                ['14.125489', 'fe80::260:97ff:fe07:69ea', 'fe80::200:86ff:fe05:80da', 136, 0,
+                '2:G52qOZ/Xl1IQatX7QFj1xiF9zu0=',
+                '2:1b9daa399fd79752106ad5fb4058f5c6217dceed',
+                '2:TR3VmEV+YrJoSxUp91WrSBvp+94='],
+
+
+                ['14.125489', '3ffe:507:0:1:260:97ff:fe07:69ea', '3ffe:507:0:1:200:86ff:fe05:80da', 3, 0,
+                '2:RMrI795nS5JuNlQg09BReQ83tOM=',
+                '2:44cac8efde674b926e365420d3d051790f37b4e3',
+                '2:zVGE0p0rqzfBh60XCsEj7Esunus='],
+
+
+                ['14.125489', '3ffe:507:0:1:200:86ff:fe05:80da', '3ffe:507:0:1:260:97ff:fe07:69ea', 3, 0,
+                '2:q/0YO81FIf88HRBiEggjZt10f9w=',
+                '2:abfd183bcd4521ff3c1d106212082366dd747fdc',
+                '2:vZvndwCMoeqoaPkyOrcphZ9SxCM='],
+            ],
+            aid.FlowTuple.make_icmp6,
+            aid.PROTO_ICMP6,
+            socket.AF_INET6)
+
     def test_sctp(self):
         self.verify_full_tuples(
             [
