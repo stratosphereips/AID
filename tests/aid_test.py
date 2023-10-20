@@ -346,83 +346,20 @@ class TestAID(unittest.TestCase):
             tpl = aid.FlowTuple(
                 aid.PROTO_TCP, ts, '1.2.3.4', '5.6.7.8')
 
-    # @unittest.skipIf(sys.version_info[0] < 3, 'not supported in Python 2.x')
-    # def test_inputs_py3(self):
-    #     # Python 3 allows us to distinguish strings and byte sequences,
-    #     # and the following test only applies to it.
-    #     with self.assertRaises(aid.FlowTupleError):
-    #         tpl = aid.FlowTuple(
-    #             aid.PROTO_TCP, '1.2.3.4', '5.6.7.8', 23, "80")
-    #
-    # def test_get_proto(self):
-    #     self.assertEqual(aid.get_proto(23), 23)
-    #     self.assertEqual(aid.get_proto("23"), 23)
-    #     self.assertEqual(aid.get_proto("tcp"), 6)
-    #     self.assertEqual(aid.get_proto("TCP"), 6)
-    #     self.assertEqual(aid.get_proto("23/tcp"), None)
-#
-# class LintCommunityID(unittest.TestCase):
-#
-#     def setUp(self):
-#         if 'pylint.epylint' not in sys.modules:
-#             self.skipTest('pylint module not available')
-#
-#     def test_linting(self):
-#         rcfile = os.path.join(LOCAL_DIR, 'pylint.rc')
-#         (out, _) = pylint.epylint.py_run('aid --rcfile=' + rcfile, return_std=True)
-#
-#         for line in out.getvalue().splitlines():
-#             if line.find('Your code has been') > 0:
-#                 print('\n' + line.strip())
-#                 break
-#
-#         self.assertTrue(out.getvalue().find(' error ') < 0,
-#                         msg='Pylint error: ' + out.getvalue())
+    @unittest.skipIf(sys.version_info[0] < 3, 'not supported in Python 2.x')
+    def test_inputs_py3(self):
+        # Python 3 allows us to distinguish strings and byte sequences,
+        # and the following test only applies to it.
+        with self.assertRaises(aid.FlowTupleError):
+            aid.FlowTuple(
+                aid.PROTO_TCP, '14234568.125489','1.2.3.4', '5.6.7.8', 23, "80")
 
-#
-# class TestCommands(unittest.TestCase):
-#
-#     def setUp(self):
-#         # Adjust the environment so it prioritizes our local module
-#         # tree. This also makes the tests work before the module is
-#         # installed.
-#         self.env = os.environ.copy()
-#
-#         try:
-#             ppath = self.env['PYTHONPATH']
-#             ppath = MODULE_DIR + os.pathsep + ppath
-#         except KeyError:
-#             ppath = MODULE_DIR
-#
-#         self.env['PYTHONPATH'] = ppath
-#
-#     def _scriptpath(self, scriptname):
-#         return os.path.abspath(os.path.join(LOCAL_DIR, '..', 'scripts', scriptname))
-#
-#     def _testfilepath(self, testfile):
-#         return os.path.abspath(os.path.join(LOCAL_DIR, testfile))
-#
-#     def test_communityid(self):
-#         out = subprocess.check_output(
-#             [self._scriptpath('all_id.py'), 'tcp', '10.0.0.1', '10.0.0.2', '10', '20'],
-#             env=self.env)
-#         self.assertEqual(out, b'1:9j2Dzwrw7T9E+IZi4b4IVT66HBI=\n')
-#
-#     def test_communityid_verbose(self):
-#         out = subprocess.check_output(
-#             [self._scriptpath('all_id.py'), '-vv', 'tcp', '10.0.0.1', '10.0.0.2', '10', '20'],
-#             env=self.env, stderr=subprocess.STDOUT)
-#         self.assertEqual(out, b"""INFO     CommunityID for 10.0.0.1 10 -> 10.0.0.2 20, proto 6, ordered:
-# INFO     | seed    00:00
-# INFO     | ipaddr  0a:00:00:01
-# INFO     | ipaddr  0a:00:00:02
-# INFO     | proto   06
-# INFO     | padding 00
-# INFO     | port    00:0a
-# INFO     | port    00:14
-# 1:9j2Dzwrw7T9E+IZi4b4IVT66HBI=
-# """)
-#
+    def test_get_proto(self):
+        self.assertEqual(aid.get_proto(23), 23)
+        self.assertEqual(aid.get_proto("23"), 23)
+        self.assertEqual(aid.get_proto("tcp"), 6)
+        self.assertEqual(aid.get_proto("TCP"), 6)
+        self.assertEqual(aid.get_proto("23/tcp"), None)
 
 
 
