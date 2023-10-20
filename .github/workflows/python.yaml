@@ -28,5 +28,5 @@ jobs:
     - name: Preserve built package
       uses: actions/upload-artifact@v2
       with:
-        name: communityid-py${{ matrix.python-version }}.tar.gz
+        name: aid-py${{ matrix.python-version }}.tar.gz
         path: dist/*.tar.gz

@@ -1,1 +1,1 @@
-import tests.communityid_test
+import tests.aid_test
