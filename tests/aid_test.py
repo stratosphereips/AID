@@ -217,23 +217,23 @@ class TestAID(unittest.TestCase):
     #         aid.PROTO_ICMP6,
     #         socket.AF_INET6)
     #
-    # def test_sctp(self):
-    #     self.verify_full_tuples(
-    #         [
-    #             ['192.168.170.8', '192.168.170.56', 7, 80,
-    #              '1:jQgCxbku+pNGw8WPbEc/TS/uTpQ=',
-    #              '1:8d0802c5b92efa9346c3c58f6c473f4d2fee4e94',
-    #              '1:Y1/0jQg6e+I3ZwZZ9LP65DNbTXU='],
-    #
-    #             ['192.168.170.56', '192.168.170.8', 80, 7,
-    #              '1:jQgCxbku+pNGw8WPbEc/TS/uTpQ=',
-    #              '1:8d0802c5b92efa9346c3c58f6c473f4d2fee4e94',
-    #              '1:Y1/0jQg6e+I3ZwZZ9LP65DNbTXU='],
-    #         ],
-    #         aid.FlowTuple.make_sctp,
-    #         aid.PROTO_SCTP,
-    #         socket.AF_INET)
-    #
+    def test_sctp(self):
+        self.verify_full_tuples(
+            [
+                ['14.125489', '192.168.170.8', '192.168.170.56', 7, 80,
+                '2:RiAuFagiMtzFGK9YcfeuvUui8Rc=',
+                 '2:46202e15a82232dcc518af5871f7aebd4ba2f117',
+                 '2:F+w4BmjStIy6NBS5KU50q56KjS0=', ],
+
+                ['14.125489', '192.168.170.56', '192.168.170.8', 80, 7,
+                '2:RiAuFagiMtzFGK9YcfeuvUui8Rc=',
+                 '2:46202e15a82232dcc518af5871f7aebd4ba2f117',
+                 '2:F+w4BmjStIy6NBS5KU50q56KjS0='],
+            ],
+            aid.FlowTuple.make_sctp,
+            aid.PROTO_SCTP,
+            socket.AF_INET)
+
     def test_tcp(self):
         self.verify_full_tuples(
             [
