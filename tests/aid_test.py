@@ -149,46 +149,51 @@ class TestAID(unittest.TestCase):
     # but I'm reluctant to add third-party dependencies for
     # testing. --cpk
     #
-    # def test_icmp(self):
-    #     self.verify_full_tuples(
-    #         [
-    #             ['192.168.0.89', '192.168.0.1', 8, 0,
-    #              '1:X0snYXpgwiv9TZtqg64sgzUn6Dk=',
-    #              '1:5f4b27617a60c22bfd4d9b6a83ae2c833527e839',
-    #              '1:03g6IloqVBdcZlPyX8r0hgoE7kA='],
-    #
-    #             ['192.168.0.1', '192.168.0.89', 0, 8,
-    #              '1:X0snYXpgwiv9TZtqg64sgzUn6Dk=',
-    #              '1:5f4b27617a60c22bfd4d9b6a83ae2c833527e839',
-    #              '1:03g6IloqVBdcZlPyX8r0hgoE7kA='],
-    #
-    #             # This is correct: message type 20 (experimental) isn't
-    #             # one we consider directional, so the message code ends up
-    #             # in the hash computation, and thus two different IDs result:
-    #             ['192.168.0.89', '192.168.0.1', 20, 0,
-    #              '1:3o2RFccXzUgjl7zDpqmY7yJi8rI=',
-    #              '1:de8d9115c717cd482397bcc3a6a998ef2262f2b2',
-    #              '1:lCXHHxavE1Vq3oX9NH5ladQg02o='],
-    #
-    #             ['192.168.0.89', '192.168.0.1', 20, 1,
-    #              '1:tz/fHIDUHs19NkixVVoOZywde+I=',
-    #              '1:b73fdf1c80d41ecd7d3648b1555a0e672c1d7be2',
-    #              '1:Ie3wmFyxiEyikbsbcO03d2nh+PM='],
-    #
-    #             # Therefore the following does _not_ get treated as the
-    #             # reverse direction, but _does_ get treated the same as
-    #             # the first two tuples, because for message type 0 the
-    #             # code is currently ignored.
-    #             ['192.168.0.1', '192.168.0.89', 0, 20,
-    #              '1:X0snYXpgwiv9TZtqg64sgzUn6Dk=',
-    #              '1:5f4b27617a60c22bfd4d9b6a83ae2c833527e839',
-    #              '1:03g6IloqVBdcZlPyX8r0hgoE7kA='],
-    #         ],
-    #         aid.FlowTuple.make_icmp,
-    #         aid.PROTO_ICMP,
-    #         socket.AF_INET)
-    #
-    #
+    def test_icmp(self):
+        self.verify_full_tuples(
+            [
+                ['14234568.125489', '192.168.0.89', '192.168.0.1', 8, 0,
+                '2:cm8+zVFOJ2b9ropzTEn4ugg4n5E=',
+                 '2:726f3ecd514e2766fdae8a734c49f8ba08389f91',
+                 '2:glOZwPuOQH7UeZrYwbkxRSPrQ7A='
+                 ],
+
+                ['14234568.125489', '192.168.0.1', '192.168.0.89', 0, 8,
+                '2:cm8+zVFOJ2b9ropzTEn4ugg4n5E=',
+                 '2:726f3ecd514e2766fdae8a734c49f8ba08389f91',
+                 '2:glOZwPuOQH7UeZrYwbkxRSPrQ7A=',
+                 ],
+
+                # This is correct: message type 20 (experimental) isn't
+                # one we consider directional, so the message code ends up
+                # in the hash computation, and thus two different IDs result:
+                ['14234568.125489', '192.168.0.89', '192.168.0.1', 20, 0,
+                '2:F6i0vCAMWZ3/7vfRWjguh+U+mBc=',
+                 '2:17a8b4bc200c599dffeef7d15a382e87e53e9817',
+                 '2:CF2kexupPNXSMIuECZUn28smQbY=',
+                 ],
+
+                ['14234568.125489', '192.168.0.89', '192.168.0.1', 20, 1,
+                '2:q7o0rNRuJDJoCb/DCbT3h848Xp0=',
+                 '2:abba34acd46e24326809bfc309b4f787ce3c5e9d',
+                 '2:oydrqNjjYKjRj7j9VXkXrR7WASs='
+                 ],
+
+                # Therefore the following does _not_ get treated as the
+                # reverse direction, but _does_ get treated the same as
+                # the first two tuples, because for message type 0 the
+                # code is currently ignored.
+                ['14234568.125489', '192.168.0.1', '192.168.0.89', 0, 20,
+                 '2:cm8+zVFOJ2b9ropzTEn4ugg4n5E=',
+                 '2:726f3ecd514e2766fdae8a734c49f8ba08389f91',
+                 '2:glOZwPuOQH7UeZrYwbkxRSPrQ7A='
+                 ],
+            ],
+            aid.FlowTuple.make_icmp,
+            aid.PROTO_ICMP,
+            socket.AF_INET)
+
+
     #
     def test_icmp6(self):
         self.verify_full_tuples(
