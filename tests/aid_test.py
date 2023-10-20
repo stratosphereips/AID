@@ -234,28 +234,29 @@ class TestAID(unittest.TestCase):
     #         aid.PROTO_SCTP,
     #         socket.AF_INET)
     #
-    # def test_tcp(self):
-    #     self.verify_full_tuples(
-    #         [
-    #             ['128.232.110.120', '66.35.250.204', 34855, 80,
-    #              '1:LQU9qZlK+B5F3KDmev6m5PMibrg=',
-    #              '1:2d053da9994af81e45dca0e67afea6e4f3226eb8',
-    #              '1:3V71V58M3Ksw/yuFALMcW0LAHvc='],
-    #
-    #             ['66.35.250.204', '128.232.110.120', 80, 34855,
-    #              '1:LQU9qZlK+B5F3KDmev6m5PMibrg=',
-    #              '1:2d053da9994af81e45dca0e67afea6e4f3226eb8',
-    #              '1:3V71V58M3Ksw/yuFALMcW0LAHvc='],
-    #
-    #             # Verify https://github.com/corelight/pycommunityid/issues/3
-    #             ['10.0.0.1', '10.0.0.2', 10, 11569,
-    #              '1:SXBGMX1lBOwhhoDrZynfROxnhnM=',
-    #              '1:497046317d6504ec218680eb6729df44ec678673',
-    #              '1:HmBRGR+fUyXF4t8WEtal7Y0gEAo='],
-    #         ],
-    #         aid.FlowTuple.make_tcp,
-    #         aid.PROTO_TCP,
-    #         socket.AF_INET)
+    def test_tcp(self):
+        self.verify_full_tuples(
+            [
+                ['14.125489','128.232.110.120', '66.35.250.204', 34855, 80,
+                 '2:HWVGag5ileXtZaijMED7wFK2Wnw=',
+                 '2:1d65466a0e6295e5ed65a8a33040fbc052b65a7c',
+                 '2:UlZmMdor6J1xeG2ufTBCLvORHWk='],
+
+                ['14.125489','66.35.250.204', '128.232.110.120', 80, 34855,
+                '2:HWVGag5ileXtZaijMED7wFK2Wnw=',
+                '2:1d65466a0e6295e5ed65a8a33040fbc052b65a7c',
+                '2:UlZmMdor6J1xeG2ufTBCLvORHWk='],
+
+                # Verify https://github.com/corelight/pycommunityid/issues/3
+                ['142548.12','10.0.0.1', '10.0.0.2', 10, 11569,
+                 '2:NGw+yq/J+dtY5lWAXVjAOPhiZDk=',
+                 '2:346c3ecaafc9f9db58e655805d58c038f8626439',
+                 '2:DpBjUG3upN0w1n4I6uOqY3r9sf8='
+                 ],
+            ],
+            aid.FlowTuple.make_tcp,
+            aid.PROTO_TCP,
+            socket.AF_INET)
 
     def test_udp(self):
         # the three hashes used for testing are 1 for
