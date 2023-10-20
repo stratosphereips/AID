@@ -268,8 +268,6 @@ class TestAID(unittest.TestCase):
                  '2:ac44367c22aa425ad73879a58c818d2f45bb99eb',
                  '2:Wv56hNj9UvXtDVsCe3UwB0+nGNM='
                  ],
-
-
                 [
                     '14.125489','8.8.8.8', '192.168.1.52', 53, 54585,
                     '2:MFrVR5TU1GlRA1eJE/RpqFNCPd0=',
@@ -298,47 +296,48 @@ class TestAID(unittest.TestCase):
             aid.FlowTuple.make_ip,
             46, socket.AF_INET)
 
-    # def test_inputs(self):
-    #     # Need protocol
-    #     with self.assertRaises(aid.FlowTupleError):
-    #         tpl = aid.FlowTuple(
-    #             None, '1.2.3.4', '5.6.7.8')
-    #
-    #     # Need both IP addresses
-    #     with self.assertRaises(aid.FlowTupleError):
-    #         tpl = aid.FlowTuple(
-    #             aid.PROTO_TCP, '1.2.3.4', None)
-    #     with self.assertRaises(aid.FlowTupleError):
-    #         tpl = aid.FlowTuple(
-    #             aid.PROTO_TCP, None, '5.6.7.8')
-    #
-    #     # Need parseable IP addresses
-    #     with self.assertRaises(aid.FlowTupleError):
-    #         tpl = aid.FlowTuple(
-    #             aid.PROTO_TCP, 'ohdear.com', '5.6.7.8')
-    #     with self.assertRaises(aid.FlowTupleError):
-    #         tpl = aid.FlowTuple(
-    #             aid.PROTO_TCP, '1.2.3.4', 'ohdear.com')
-    #
-    #     # Need two valid ports
-    #     with self.assertRaises(aid.FlowTupleError):
-    #         tpl = aid.FlowTuple(
-    #             aid.PROTO_TCP, '1.2.3.4', '5.6.7.8', 23, None)
-    #     with self.assertRaises(aid.FlowTupleError):
-    #         tpl = aid.FlowTuple(
-    #             aid.PROTO_TCP, '1.2.3.4', '5.6.7.8', None, 23)
-    #     with self.assertRaises(aid.FlowTupleError):
-    #         tpl = aid.FlowTuple(
-    #             aid.PROTO_TCP, '1.2.3.4', '5.6.7.8', "23/tcp", 23)
-    #     with self.assertRaises(aid.FlowTupleError):
-    #         tpl = aid.FlowTuple(
-    #             aid.PROTO_TCP, '1.2.3.4', '5.6.7.8', 23, "23/tcp")
-    #
-    #     # Need ports with port-enabled protocol
-    #     with self.assertRaises(aid.FlowTupleError):
-    #         tpl = aid.FlowTuple(
-    #             aid.PROTO_TCP, '1.2.3.4', '5.6.7.8')
-    #
+    def test_inputs(self):
+        ts = '14.125489'
+        # Need protocol
+        with self.assertRaises(aid.FlowTupleError):
+            tpl = aid.FlowTuple(
+                None, ts, '1.2.3.4', '5.6.7.8')
+
+        # Need both IP addresses
+        with self.assertRaises(aid.FlowTupleError):
+            aid.FlowTuple(
+                aid.PROTO_TCP, ts, '1.2.3.4', None)
+        with self.assertRaises(aid.FlowTupleError):
+            aid.FlowTuple(
+                aid.PROTO_TCP, ts, None, '5.6.7.8')
+
+        # Need parseable IP addresses
+        with self.assertRaises(aid.FlowTupleError):
+            aid.FlowTuple(
+                aid.PROTO_TCP, ts, 'ohdear.com', '5.6.7.8')
+        with self.assertRaises(aid.FlowTupleError):
+            aid.FlowTuple(
+                aid.PROTO_TCP, ts, '1.2.3.4', 'ohdear.com')
+
+        # Need two valid ports
+        with self.assertRaises(aid.FlowTupleError):
+            aid.FlowTuple(
+                aid.PROTO_TCP, ts, '1.2.3.4', '5.6.7.8', 23, None)
+        with self.assertRaises(aid.FlowTupleError):
+            aid.FlowTuple(
+                aid.PROTO_TCP, ts, '1.2.3.4', '5.6.7.8', None, 23)
+        with self.assertRaises(aid.FlowTupleError):
+            aid.FlowTuple(
+                aid.PROTO_TCP, ts, '1.2.3.4', '5.6.7.8', "23/tcp", 23)
+        with self.assertRaises(aid.FlowTupleError):
+            aid.FlowTuple(
+                aid.PROTO_TCP, ts, '1.2.3.4', '5.6.7.8', 23, "23/tcp")
+
+        # Need ports with port-enabled protocol
+        with self.assertRaises(aid.FlowTupleError):
+            tpl = aid.FlowTuple(
+                aid.PROTO_TCP, ts, '1.2.3.4', '5.6.7.8')
+
     # @unittest.skipIf(sys.version_info[0] < 3, 'not supported in Python 2.x')
     # def test_inputs_py3(self):
     #     # Python 3 allows us to distinguish strings and byte sequences,
