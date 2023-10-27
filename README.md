@@ -14,7 +14,7 @@ Installation
 
 This package is available [on PyPI](https://pypi.org/project/communityid/), therefore:
 
-    pip install pyaid
+    pip install aid_hash
 
 To install locally from a git clone, you can use also use pip, e.g. by saying
 
@@ -39,14 +39,14 @@ and ipaddress objects.
 Here's what it looks like:
 
     
-    import aid
+    import aid_hash
     
-    aid_obj =  aid.AID()
+    aid =  aid_hash.AID()
     
     tpl = aid.FlowTuple.make_tcp('14.125487','127.0.0.1', '10.0.0.1', 1234, 80)
     
     
-    print(aid_obj.calc(tpl))
+    print(aid.calc(tpl))
 
 This will print 2:7RJA0SqvF3nbfatPoP1dkZnVvWw=.
 

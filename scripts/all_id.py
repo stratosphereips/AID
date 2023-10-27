@@ -8,7 +8,7 @@ import argparse
 import logging
 import sys
 
-import aid
+import aid_hash
 
 class TupleParser:
     @abc.abstractmethod
@@ -32,7 +32,7 @@ class DefaultParser(TupleParser):
         if num_parts not in [3, 5]:
             return None, 'Need either 3 or 5 tuple components'
 
-        proto = aid.get_proto(parts[0])
+        proto = aid_hash.get_proto(parts[0])
         if proto is None:
             return None, 'Could not parse IP protocol number'
 
@@ -44,14 +44,14 @@ class DefaultParser(TupleParser):
             except ValueError:
                 return None, 'Could not parse port numbers'
 
-            if (not aid.FlowTuple.is_port(sport) or
-                not aid.FlowTuple.is_port(dport)):
+            if (not aid_hash.FlowTuple.is_port(sport) or
+                not aid_hash.FlowTuple.is_port(dport)):
                 return None, 'Could not parse port numbers'
 
         try:
-            return aid.FlowTuple(
+            return aid_hash.FlowTuple(
                 proto, parts[1], parts[2], sport, dport), None
-        except aid.FlowTupleError as err:
+        except aid_hash.FlowTupleError as err:
             return None, repr(err)
 
 class ZeekLogsParser(TupleParser):
@@ -65,7 +65,7 @@ class ZeekLogsParser(TupleParser):
         if len(parts) != 5:
             return None, 'Need 5-part tuple when parsing Zeek logs'
 
-        proto = aid.get_proto(parts[4])
+        proto = aid_hash.get_proto(parts[4])
         if proto is None:
             return None, 'Could not parse IP protocol number'
 
@@ -74,16 +74,16 @@ class ZeekLogsParser(TupleParser):
         except ValueError:
             return None, 'Could not parse port numbers'
 
-        if not (aid.FlowTuple.is_ipaddr(parts[0]) and
-                aid.FlowTuple.is_port(sport) and
-                aid.FlowTuple.is_ipaddr(parts[2]) and
-                aid.FlowTuple.is_port(dport)):
+        if not (aid_hash.FlowTuple.is_ipaddr(parts[0]) and
+                aid_hash.FlowTuple.is_port(sport) and
+                aid_hash.FlowTuple.is_ipaddr(parts[2]) and
+                aid_hash.FlowTuple.is_port(dport)):
             return None, 'Need two IP addresses and port numbers'
 
         try:
-            return aid.FlowTuple(
+            return aid_hash.FlowTuple(
                 proto, parts[0], parts[2], sport, dport), None
-        except aid.FlowTupleError as err:
+        except aid_hash.FlowTupleError as err:
             return None, repr(err)
 
 def main():
@@ -123,20 +123,20 @@ does not matter.
         handler.setFormatter(formatter)
 
         if args.verbose == 1:
-            aid.LOG.setLevel(logging.WARNING)
+            aid_hash.LOG.setLevel(logging.WARNING)
         elif args.verbose == 2:
-            aid.LOG.setLevel(logging.INFO)
+            aid_hash.LOG.setLevel(logging.INFO)
         elif args.verbose >= 3:
-            aid.LOG.setLevel(logging.DEBUG)
+            aid_hash.LOG.setLevel(logging.DEBUG)
 
-        aid.LOG.addHandler(handler)
+        aid_hash.LOG.addHandler(handler)
 
-    commid = aid.AID(args.seed, not args.no_base64)
+    commid = aid_hash.AID(args.seed, not args.no_base64)
 
     for parser in (DefaultParser(), ZeekLogsParser()):
         tpl, msg = parser.parse(args.flowtuple)
         if tpl is None:
-            aid.LOG.debug(
+            aid_hash.LOG.debug(
                 '%s failure: %s\n' % (parser.__class__.__name__, msg))
             continue
 

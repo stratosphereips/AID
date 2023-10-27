@@ -3,7 +3,7 @@
 Unit & functional tests for the Community ID package. Run with something like:
 
 python -m unittest communityid_test
-nose2 -C --coverage ../aid --coverage-report term-missing communityid_test
+nose2 -C --coverage ../aid_hash --coverage-report term-missing communityid_test
 
 You can also invoke this file directly.
 """
@@ -23,24 +23,24 @@ LOCAL_DIR=os.path.dirname(__file__)
 MODULE_DIR=os.path.abspath(os.path.join(LOCAL_DIR, '..'))
 sys.path.insert(0, MODULE_DIR)
 
-import aid
-import aid.compat
+import aid_hash
+import aid_hash.compat
 
 class TestAID(unittest.TestCase):
 
     def setUp(self):
         self.cids = [
-            aid.AID(),
-            aid.AID(use_base64=False),
-            aid.AID(seed=1),
+            aid_hash.AID(),
+            aid_hash.AID(use_base64=False),
+            aid_hash.AID(seed=1),
         ]
 
     def assertEqualID(self, cft, correct_results):
         """
         Helper for ID string correctness assertion.
-        cft is a aid.FlowTuple.
+        cft is a aid_hash.FlowTuple.
         """
-        # Create a list of tuples, each containing a AID
+        # Create a list of tuples, each containing a aid_hash
         # instance as first member, and the expected result as the
         # second:
         cid_result_pairs = zip(self.cids, correct_results)
@@ -68,11 +68,11 @@ class TestAID(unittest.TestCase):
             self.assertEqualID(cft, aids)
 
             # Using specific protocol number:
-            cft = aid.FlowTuple(proto_num, ts, srcip, dstip, srcport, dstport)
+            cft = aid_hash.FlowTuple(proto_num, ts, srcip, dstip, srcport, dstport)
             self.assertEqualID(cft, aids)
 
             # Using packed NBO, as when grabbing from a packet header:
-            cft = aid.FlowTuple(
+            cft = aid_hash.FlowTuple(
                 proto_num,
                 ts,
                 socket.inet_pton(af_family, srcip),
@@ -82,7 +82,7 @@ class TestAID(unittest.TestCase):
             self.assertEqualID(cft, aids)
 
             # Using a mix, ewww.
-            cft = aid.FlowTuple(
+            cft = aid_hash.FlowTuple(
                 proto_num,
                 ts,
                 socket.inet_pton(af_family, srcip),
@@ -93,11 +93,11 @@ class TestAID(unittest.TestCase):
             # Using Python 3.3+'s ipaddress types or their 2.x
             # backport:
             try:
-                cft = aid.FlowTuple(
+                cft = aid_hash.FlowTuple(
                     proto_num,
                     ts,
-                    aid.compat.ip_address(srcip),
-                    aid.compat.ip_address(dstip),
+                    aid_hash.compat.ip_address(srcip),
+                    aid_hash.compat.ip_address(dstip),
                     srcport, dstport
                 )
                 self.assertEqualID(cft,  aids)
@@ -117,11 +117,11 @@ class TestAID(unittest.TestCase):
             self.assertEqualID(cft, aids)
 
             # Using specific protocol number:
-            cft = aid.FlowTuple(proto_num, ts, srcip, dstip)
+            cft = aid_hash.FlowTuple(proto_num, ts, srcip, dstip)
             self.assertEqualID(cft, aids)
 
             # Using packed NBO, as when grabbing from a packet header:
-            cft = aid.FlowTuple(
+            cft = aid_hash.FlowTuple(
                 proto_num,
                 ts,
                 socket.inet_pton(af_family, srcip),
@@ -129,18 +129,18 @@ class TestAID(unittest.TestCase):
             self.assertEqualID(cft, aids)
 
             # Using a mix, ewww.
-            cft = aid.FlowTuple(
+            cft = aid_hash.FlowTuple(
                 proto_num, ts, srcip, socket.inet_pton(af_family, dstip))
             self.assertEqualID(cft, aids)
 
             # Using Python 3.3+'s ipaddress types or their 2.x
             # backport:
             try:
-                cft = aid.FlowTuple(
+                cft = aid_hash.FlowTuple(
                     proto_num,
                     ts,
-                    aid.compat.ip_address(srcip),
-                    aid.compat.ip_address(dstip))
+                    aid_hash.compat.ip_address(srcip),
+                    aid_hash.compat.ip_address(dstip))
                 self.assertEqualID(cft, aids)
             except RuntimeError:
                 pass
@@ -189,8 +189,8 @@ class TestAID(unittest.TestCase):
                  '2:glOZwPuOQH7UeZrYwbkxRSPrQ7A='
                  ],
             ],
-            aid.FlowTuple.make_icmp,
-            aid.PROTO_ICMP,
+            aid_hash.FlowTuple.make_icmp,
+            aid_hash.PROTO_ICMP,
             socket.AF_INET)
 
 
@@ -220,8 +220,8 @@ class TestAID(unittest.TestCase):
                 '2:abfd183bcd4521ff3c1d106212082366dd747fdc',
                 '2:vZvndwCMoeqoaPkyOrcphZ9SxCM='],
             ],
-            aid.FlowTuple.make_icmp6,
-            aid.PROTO_ICMP6,
+            aid_hash.FlowTuple.make_icmp6,
+            aid_hash.PROTO_ICMP6,
             socket.AF_INET6)
 
     def test_sctp(self):
@@ -237,8 +237,8 @@ class TestAID(unittest.TestCase):
                  '2:46202e15a82232dcc518af5871f7aebd4ba2f117',
                  '2:F+w4BmjStIy6NBS5KU50q56KjS0='],
             ],
-            aid.FlowTuple.make_sctp,
-            aid.PROTO_SCTP,
+            aid_hash.FlowTuple.make_sctp,
+            aid_hash.PROTO_SCTP,
             socket.AF_INET)
 
     def test_tcp(self):
@@ -261,13 +261,13 @@ class TestAID(unittest.TestCase):
                  '2:DpBjUG3upN0w1n4I6uOqY3r9sf8='
                  ],
             ],
-            aid.FlowTuple.make_tcp,
-            aid.PROTO_TCP,
+            aid_hash.FlowTuple.make_tcp,
+            aid_hash.PROTO_TCP,
             socket.AF_INET)
 
     def test_udp(self):
         # the three hashes used for testing are 1 for
-        # aid.AID(), 1 without base 64 and one with seed=1
+        # aid_hash.aid_hash(), 1 without base 64 and one with seed=1
         self.verify_full_tuples(
             [
                 [
@@ -284,8 +284,8 @@ class TestAID(unittest.TestCase):
                 ]
 
             ],
-            aid.FlowTuple.make_udp,
-            aid.PROTO_UDP,
+            aid_hash.FlowTuple.make_udp,
+            aid_hash.PROTO_UDP,
             socket.AF_INET)
 
     def test_ip(self):
@@ -301,65 +301,65 @@ class TestAID(unittest.TestCase):
                 '2:42ccd65b85aa2a335944c43a65dcd81d8c138bce',
                  '2:lDb1HTeX/VTrraT295C2ZD/hTv8='],
             ],
-            aid.FlowTuple.make_ip,
+            aid_hash.FlowTuple.make_ip,
             46, socket.AF_INET)
 
     def test_inputs(self):
         ts = '14.125489'
         # Need protocol
-        with self.assertRaises(aid.FlowTupleError):
-            tpl = aid.FlowTuple(
+        with self.assertRaises(aid_hash.FlowTupleError):
+            tpl = aid_hash.FlowTuple(
                 None, ts, '1.2.3.4', '5.6.7.8')
 
         # Need both IP addresses
-        with self.assertRaises(aid.FlowTupleError):
-            aid.FlowTuple(
-                aid.PROTO_TCP, ts, '1.2.3.4', None)
-        with self.assertRaises(aid.FlowTupleError):
-            aid.FlowTuple(
-                aid.PROTO_TCP, ts, None, '5.6.7.8')
+        with self.assertRaises(aid_hash.FlowTupleError):
+            aid_hash.FlowTuple(
+                aid_hash.PROTO_TCP, ts, '1.2.3.4', None)
+        with self.assertRaises(aid_hash.FlowTupleError):
+            aid_hash.FlowTuple(
+                aid_hash.PROTO_TCP, ts, None, '5.6.7.8')
 
         # Need parseable IP addresses
-        with self.assertRaises(aid.FlowTupleError):
-            aid.FlowTuple(
-                aid.PROTO_TCP, ts, 'ohdear.com', '5.6.7.8')
-        with self.assertRaises(aid.FlowTupleError):
-            aid.FlowTuple(
-                aid.PROTO_TCP, ts, '1.2.3.4', 'ohdear.com')
+        with self.assertRaises(aid_hash.FlowTupleError):
+            aid_hash.FlowTuple(
+                aid_hash.PROTO_TCP, ts, 'ohdear.com', '5.6.7.8')
+        with self.assertRaises(aid_hash.FlowTupleError):
+            aid_hash.FlowTuple(
+                aid_hash.PROTO_TCP, ts, '1.2.3.4', 'ohdear.com')
 
         # Need two valid ports
-        with self.assertRaises(aid.FlowTupleError):
-            aid.FlowTuple(
-                aid.PROTO_TCP, ts, '1.2.3.4', '5.6.7.8', 23, None)
-        with self.assertRaises(aid.FlowTupleError):
-            aid.FlowTuple(
-                aid.PROTO_TCP, ts, '1.2.3.4', '5.6.7.8', None, 23)
-        with self.assertRaises(aid.FlowTupleError):
-            aid.FlowTuple(
-                aid.PROTO_TCP, ts, '1.2.3.4', '5.6.7.8', "23/tcp", 23)
-        with self.assertRaises(aid.FlowTupleError):
-            aid.FlowTuple(
-                aid.PROTO_TCP, ts, '1.2.3.4', '5.6.7.8', 23, "23/tcp")
+        with self.assertRaises(aid_hash.FlowTupleError):
+            aid_hash.FlowTuple(
+                aid_hash.PROTO_TCP, ts, '1.2.3.4', '5.6.7.8', 23, None)
+        with self.assertRaises(aid_hash.FlowTupleError):
+            aid_hash.FlowTuple(
+                aid_hash.PROTO_TCP, ts, '1.2.3.4', '5.6.7.8', None, 23)
+        with self.assertRaises(aid_hash.FlowTupleError):
+            aid_hash.FlowTuple(
+                aid_hash.PROTO_TCP, ts, '1.2.3.4', '5.6.7.8', "23/tcp", 23)
+        with self.assertRaises(aid_hash.FlowTupleError):
+            aid_hash.FlowTuple(
+                aid_hash.PROTO_TCP, ts, '1.2.3.4', '5.6.7.8', 23, "23/tcp")
 
         # Need ports with port-enabled protocol
-        with self.assertRaises(aid.FlowTupleError):
-            tpl = aid.FlowTuple(
-                aid.PROTO_TCP, ts, '1.2.3.4', '5.6.7.8')
+        with self.assertRaises(aid_hash.FlowTupleError):
+            tpl = aid_hash.FlowTuple(
+                aid_hash.PROTO_TCP, ts, '1.2.3.4', '5.6.7.8')
 
     @unittest.skipIf(sys.version_info[0] < 3, 'not supported in Python 2.x')
     def test_inputs_py3(self):
         # Python 3 allows us to distinguish strings and byte sequences,
         # and the following test only applies to it.
-        with self.assertRaises(aid.FlowTupleError):
-            aid.FlowTuple(
-                aid.PROTO_TCP, '14234568.125489','1.2.3.4', '5.6.7.8', 23, "80")
+        with self.assertRaises(aid_hash.FlowTupleError):
+            aid_hash.FlowTuple(
+                aid_hash.PROTO_TCP, '14234568.125489','1.2.3.4', '5.6.7.8', 23, "80")
 
     def test_get_proto(self):
-        self.assertEqual(aid.get_proto(23), 23)
-        self.assertEqual(aid.get_proto("23"), 23)
-        self.assertEqual(aid.get_proto("tcp"), 6)
-        self.assertEqual(aid.get_proto("TCP"), 6)
-        self.assertEqual(aid.get_proto("23/tcp"), None)
+        self.assertEqual(aid_hash.get_proto(23), 23)
+        self.assertEqual(aid_hash.get_proto("23"), 23)
+        self.assertEqual(aid_hash.get_proto("tcp"), 6)
+        self.assertEqual(aid_hash.get_proto("TCP"), 6)
+        self.assertEqual(aid_hash.get_proto("23/tcp"), None)
 
 
 
