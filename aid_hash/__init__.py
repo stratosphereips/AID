@@ -1,5 +1,5 @@
 """
-Toplevel module for the AID package.
+Toplevel module for the aid_hash package.
 
 We pull in all the objects and variables you'd commonly need. The user
 should be fine just importing this, and not need any of the
@@ -10,10 +10,10 @@ import logging
 LOG = logging.getLogger(__name__)
 LOG.addHandler(logging.NullHandler())
 
-from aid.error import Error, FlowTupleError
-from aid.algo import FlowTuple
-from aid.algo import AID
-from aid.algo import (PROTO_ICMP, PROTO_TCP, PROTO_UDP, PROTO_ICMP6,
+from aid_hash.error import Error, FlowTupleError
+from aid_hash.algo import FlowTuple
+from aid_hash.algo import AID
+from aid_hash.algo import (PROTO_ICMP, PROTO_TCP, PROTO_UDP, PROTO_ICMP6,
                               PROTO_SCTP, PORT_PROTOS)
 
 def get_proto(proto):

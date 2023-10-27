@@ -11,10 +11,10 @@ import string
 import struct
 import re
 
-from aid import error
-from aid import compat
-from aid import icmp
-from aid import icmp6
+from aid_hash import error
+from aid_hash import compat
+from aid_hash import icmp
+from aid_hash import icmp6
 
 from . import LOG
 
@@ -54,7 +54,7 @@ class FlowTuple:
 
         The proto argument is a non-negative integer and represents an
         IP protocol number, e.g. 6 for TCP. You can use the PROTO_*
-        constants if convenient, and aid.get_proto() to help
+        constants if convenient, and aid_hash.get_proto() to help
         convert to integer.
 
         The saddr and daddr arguments are source & destination IP
@@ -439,7 +439,7 @@ class AID(CommunityIDBase):
         self._err = None
 
     def __repr__(self):
-        return 'AID(v=%s,seed=%s,base64=%s)' \
+        return 'aid_hash(v=%s,seed=%s,base64=%s)' \
             % (self._version, self._seed, self._use_base64)
 
     def get_error(self):
@@ -457,7 +457,7 @@ class AID(CommunityIDBase):
         None. In that case consider get_error() to learn more about
         what happened.
         """
-        LOG.info('AID for %s:' % tpl)
+        LOG.info('aid_hash for %s:' % tpl)
         tpl = tpl.in_nbo().in_order()
         return self.render(self.hash(tpl))
 
