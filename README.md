@@ -41,11 +41,10 @@ Here's what it looks like:
     
     import aid_hash
     
-    aid =  aid_hash.AID()
-    
     tpl = aid.FlowTuple.make_tcp('14.125487','127.0.0.1', '10.0.0.1', 1234, 80)
-    
-    
+
+    aid =  aid_hash.AID()
+
     print(aid.calc(tpl))
 
 This will print 2:7RJA0SqvF3nbfatPoP1dkZnVvWw=.
